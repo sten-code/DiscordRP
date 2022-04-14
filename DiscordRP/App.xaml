@@ -1,0 +1,294 @@
+﻿<Application x:Class="DiscordRP.NET_Framework_.App"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:local="clr-namespace:DiscordRP.NET_Framework_"
+             StartupUri="MainWindow.xaml">
+    <Application.Resources>
+        <FontFamily x:Key="Whitney-Light">/Fonts/whitney-light.otf#Whitney Light</FontFamily>
+        <FontFamily x:Key="Whitney-Book">/Fonts/whitney-book.otf#Whitney Book</FontFamily>
+        <FontFamily x:Key="Whitney-Medium">/Fonts/whitney-medium.otf#Whitney</FontFamily>
+        <FontFamily x:Key="Whitney-SemiBold">/Fonts/whitney-semibold.otf#Whitney Semibold</FontFamily>
+        <FontFamily x:Key="Whitney-Bold">/Fonts/whitney-bold.otf#Whitney Bold</FontFamily>
+        <FontFamily x:Key="Whitney-Black">/Fonts/whitney-bold.otf#Whitney Black</FontFamily>
+
+        <Style TargetType="{x:Type Button}" x:Key="CloseButton">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type Button}">
+                        <Border x:Name="Border"
+                                Width="24" Height="24"
+                                Background="Transparent"
+                                BorderThickness="0">
+                            <VisualStateManager.VisualStateGroups>
+                                <VisualStateGroup x:Name="CommonStates">
+                                    <VisualState x:Name="Normal">
+                                        <Storyboard>
+                                            <ColorAnimation Storyboard.TargetName="Path"
+                                                            Storyboard.TargetProperty="(Path.Fill).(SolidColorBrush.Color)"
+                                                            To="#73767a"
+                                                            Duration="0:0:0.125" />
+                                        </Storyboard>
+                                    </VisualState>
+                                    <VisualState x:Name="MouseOver">
+                                        <Storyboard>
+                                            <ColorAnimation Storyboard.TargetName="Path"
+                                                            Storyboard.TargetProperty="(Path.Fill).(SolidColorBrush.Color)"
+                                                            To="#dcddde"
+                                                            Duration="0:0:0.125" />
+                                        </Storyboard>
+                                    </VisualState>
+                                </VisualStateGroup>
+                            </VisualStateManager.VisualStateGroups>
+                            <Grid Width="15" Height="15" 
+                                  VerticalAlignment="Center" HorizontalAlignment="Center">
+                                <Path x:Name="Path" 
+                                      Data="M18.4 4L12 10.4L5.6 4L4 5.6L10.4 12L4 18.4L5.6 20L12 13.6L18.4 20L20 18.4L13.6 12L20 5.6L18.4 4Z" 
+                                      Fill="#73767a"
+                                      Stretch="Fill"/>
+                            </Grid>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style TargetType="{x:Type Button}" x:Key="DiscordButton">
+            <Setter Property="TextElement.Foreground" Value="#dcddde"/>
+            <Setter Property="TextElement.FontFamily" Value="{StaticResource Whitney-Medium}"/>
+            <Setter Property="TextElement.FontSize" Value="16"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type Button}">
+                        <Border x:Name="Border"
+                                CornerRadius="4"
+                                Background="#5865f2">
+                            <VisualStateManager.VisualStateGroups>
+                                <VisualStateGroup x:Name="CommonStates">
+                                    <VisualState x:Name="Normal">
+                                        <Storyboard>
+                                            <ColorAnimation Storyboard.TargetName="Border"
+                                                            Storyboard.TargetProperty="(Border.Background).(SolidColorBrush.Color)"
+                                                            To="#5865f2"
+                                                            Duration="0:0:0.125" />
+                                        </Storyboard>
+                                    </VisualState>
+                                    <VisualState x:Name="MouseOver">
+                                        <Storyboard>
+                                            <ColorAnimation Storyboard.TargetName="Border"
+                                                            Storyboard.TargetProperty="(Border.Background).(SolidColorBrush.Color)"
+                                                            To="#4752c4"
+                                                            Duration="0:0:0.125" />
+                                        </Storyboard>
+                                    </VisualState>
+                                    <VisualState x:Name="Pressed">
+                                        <Storyboard>
+                                            <ColorAnimation Storyboard.TargetName="Border"
+                                                            Storyboard.TargetProperty="(Border.Background).(SolidColorBrush.Color)"
+                                                            To="#3c45a5"
+                                                            Duration="0:0:0.125" />
+                                        </Storyboard>
+                                    </VisualState>
+                                </VisualStateGroup>
+                            </VisualStateManager.VisualStateGroups>
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style TargetType="{x:Type TextBox}" x:Key="DiscordTextBox">
+            <Setter Property="TextElement.Foreground" Value="#dcddde"/>
+            <Setter Property="TextElement.FontFamily" Value="{StaticResource Whitney-Book}"/>
+            <Setter Property="TextElement.FontSize" Value="16"/>
+            <Setter Property="CaretBrush">
+                <Setter.Value>
+                    <SolidColorBrush Color="#dcddde"/>
+                </Setter.Value>
+            </Setter>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type TextBoxBase}">
+                        <Border Name="Border"
+                                BorderThickness="0"
+                                CornerRadius="4"
+                                Height="40"
+                                Background="#202225">
+                            <ScrollViewer Margin="7,7,7,7"
+                                          VerticalAlignment="Center"
+                                          x:Name="PART_ContentHost"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style TargetType="{x:Type ComboBox}"
+               x:Key="DiscordComboBox">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type ComboBox}">
+                        <Border BorderThickness="0"
+                                CornerRadius="4"
+                                Height="40"
+                                Background="#202225">
+                            <TextBlock Background="Transparent"
+                                       Text="very noice"
+                                       VerticalAlignment="Center"
+                                       Foreground="#dcddde"
+                                       FontSize="16"
+                                       FontFamily="{StaticResource Whitney-Book}"
+                                       Margin="8,7,7,7"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <ControlTemplate x:Key="ComboBoxToggleButton" TargetType="{x:Type ToggleButton}">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition />
+                    <ColumnDefinition Width="40"/>
+                </Grid.ColumnDefinitions>
+                <Border x:Name="Border"
+                        CornerRadius="4"
+                        Grid.ColumnSpan="2"
+                        Background="#202225"/>
+                <Path x:Name="Arrow"
+                      Grid.Column="1"     
+                      Fill="#dcddde"
+                      HorizontalAlignment="Center"
+                      VerticalAlignment="Center"
+                      Width="24"
+                      Height="24"
+                      Data="M16.59 8.59003L12 13.17L7.41 8.59003L6 10L12 16L18 10L16.59 8.59003Z"/>
+            </Grid>
+            <ControlTemplate.Triggers>
+                <Trigger Property="ToggleButton.IsChecked" Value="true">
+                    <Setter TargetName="Arrow" Property="RenderTransform">
+                        <Setter.Value>
+                            <TransformGroup>
+                                <ScaleTransform ScaleY="-1.0"/>
+                                <TranslateTransform Y="24"/>
+                            </TransformGroup>
+                        </Setter.Value>
+                    </Setter>
+                </Trigger>
+            </ControlTemplate.Triggers>
+        </ControlTemplate>
+
+        <ControlTemplate x:Key="ComboBoxTextBox" TargetType="{x:Type TextBox}">
+            <Border x:Name="PART_ContentHost" Focusable="False" Background="{TemplateBinding Background}" />
+        </ControlTemplate>
+        <Style x:Key="{x:Type ComboBox}" TargetType="{x:Type ComboBox}">
+            <Setter Property="SnapsToDevicePixels" Value="true"/>
+            <Setter Property="OverridesDefaultStyle" Value="true"/>
+            <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Auto"/>
+            <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Auto"/>
+            <Setter Property="ScrollViewer.CanContentScroll" Value="true"/>
+            <Setter Property="MinWidth" Value="120"/>
+            <Setter Property="MinHeight" Value="40"/>
+            <Setter Property="Foreground" Value="#dcddde"/>
+            <Setter Property="FontSize" Value="16"/>
+            <Setter Property="FontFamily" Value="{StaticResource Whitney-Book}"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type ComboBox}">
+                        <Grid>
+                            <ToggleButton Name="ToggleButton" 
+                                          Template="{StaticResource ComboBoxToggleButton}" 
+                                          Grid.Column="2"
+                                          Focusable="false"
+                                          IsChecked="{Binding Path=IsDropDownOpen, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}"
+                                          ClickMode="Press">
+                            </ToggleButton>
+                            <ContentPresenter Name="ContentSite" IsHitTestVisible="False"  Content="{TemplateBinding SelectionBoxItem}"
+                                              ContentTemplate="{TemplateBinding SelectionBoxItemTemplate}"
+                                              ContentTemplateSelector="{TemplateBinding ItemTemplateSelector}"
+                                              Margin="10,3,23,3"
+                                              VerticalAlignment="Center"
+                                              HorizontalAlignment="Left"/>
+                            <TextBox x:Name="PART_EditableTextBox"
+                                     Style="{x:Null}" 
+                                     Template="{StaticResource ComboBoxTextBox}"
+                                     VerticalAlignment="Center" 
+                                     Margin="10,3,40,2"
+                                     Focusable="True"
+                                     FontSize="16"
+                                     FontFamily="{StaticResource Whitney-Book}"
+                                     Background="#202225"
+                                     Foreground="#dcddde"
+                                     Visibility="Hidden"
+                                     IsReadOnly="{TemplateBinding IsReadOnly}">
+                                <TextBox.CaretBrush>
+                                    <SolidColorBrush Color="#dcddde"/>
+                                </TextBox.CaretBrush>
+                            </TextBox>
+                            <Popup Name="Popup"
+                                   Placement="Bottom"
+                                   IsOpen="{TemplateBinding IsDropDownOpen}"
+                                   AllowsTransparency="True"
+                                   Focusable="False"
+                                   PopupAnimation="Slide">
+                                <Grid Name="DropDown"
+                                      SnapsToDevicePixels="True"
+                                      MinWidth="{TemplateBinding ActualWidth}">
+                                    <Border x:Name="DropDownBorder"
+                                            Background="#202225"
+                                            CornerRadius="7"/>
+                                    <ScrollViewer Margin="4,6,4,6" SnapsToDevicePixels="True">
+                                        <StackPanel IsItemsHost="True" KeyboardNavigation.DirectionalNavigation="Contained"/>
+                                    </ScrollViewer>
+                                </Grid>
+                            </Popup>
+                        </Grid>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsEnabled" Value="false">
+                                <Setter Property="Foreground" Value="#888888"/>
+                            </Trigger>
+                            <Trigger Property="IsGrouping" Value="true">
+                                <Setter Property="ScrollViewer.CanContentScroll" Value="false"/>
+                            </Trigger>
+                            <Trigger SourceName="Popup" Property="Popup.AllowsTransparency" Value="true">
+                                <Setter TargetName="DropDownBorder" Property="CornerRadius" Value="0"/>
+                                <Setter TargetName="DropDownBorder" Property="Margin" Value="0,2,0,0"/>
+                            </Trigger>
+                            <Trigger Property="IsEditable"  Value="true">
+                                <Setter Property="IsTabStop" Value="false"/>
+                                <Setter TargetName="PART_EditableTextBox" Property="Visibility" Value="Visible"/>
+                                <Setter TargetName="ContentSite" Property="Visibility" Value="Hidden"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+            </Style.Triggers>
+        </Style>
+
+        <Style x:Key="{x:Type ComboBoxItem}" TargetType="{x:Type ComboBoxItem}">
+            <Setter Property="SnapsToDevicePixels" Value="true"/>
+            <Setter Property="Foreground" Value="#dcddde"/>
+            <Setter Property="FontFamily" Value="{StaticResource Whitney-Book}"/>
+            <Setter Property="FontSize" Value="16"/>
+            <Setter Property="OverridesDefaultStyle" Value="true"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type ComboBoxItem}">
+                        <Border Name="Border"
+                              Padding="2"
+                              SnapsToDevicePixels="true">
+                            <ContentPresenter />
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsHighlighted" Value="true">
+                                <Setter TargetName="Border" Property="Background" Value="#232529"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Application.Resources>
+</Application>
