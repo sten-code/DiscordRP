@@ -1,6 +1,7 @@
 ﻿using DiscordRPC;
 using IWshRuntimeLibrary;
 using Newtonsoft.Json;
+using Octokit;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -20,6 +21,7 @@ namespace DiscordRP
     public partial class MainWindow : Window
     {
         public DiscordRpcClient Client;
+        public GitHubClient GithubClient;
 
         private NotifyIcon Notify;
         private System.Timers.Timer Loop = new System.Timers.Timer(60000);
@@ -30,8 +32,8 @@ namespace DiscordRP
         public MainWindow()
         {
             InitializeComponent();
-
-
+            GithubClient = new GitHubClient(new ProductHeaderValue("DiscordRP"));
+            CheckUpdates();
             StartAnimation();
             Notify = new NotifyIcon();
             Notify.Icon = Properties.Resources.Discord;
@@ -78,6 +80,55 @@ namespace DiscordRP
             Startup();
         }
 
+        public async void CheckUpdates()
+        {
+            IReadOnlyList<Release> releases;
+
+            try
+            {
+                releases = await GithubClient.Repository.Release.GetAll("ghostkiller967", "DiscordRP");
+            }
+            catch
+            {
+                System.Windows.MessageBox.Show("There was an error fetching new updates, maybe check your internet connection");
+                return;
+            }
+
+            Release latest = releases[0];
+
+            Version currentVersion = Version.Parse(System.Windows.Forms.Application.ProductVersion);
+            Version latestVersion = Version.Parse(latest.TagName);
+
+            if (currentVersion.CompareTo(latestVersion) < 0)
+            {
+                if (System.Windows.MessageBox.Show("New update detected, do you want to update?", "Update", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
+                {
+                    if (System.IO.File.Exists(Directory.GetParent(Environment.CurrentDirectory) + "\\update.zip"))
+                    {
+                        System.IO.File.Delete(Directory.GetParent(Environment.CurrentDirectory) + "\\update.zip");
+                    }
+                    new WebClient().DownloadFile(latest.Assets[0].BrowserDownloadUrl, Directory.GetParent(Environment.CurrentDirectory) + "\\update.zip");
+
+                    string script = $"Stop-Process -Name \"{System.Windows.Forms.Application.ProductName}\"\nStart-Sleep -Seconds 2\nRemove-Item -LiteralPath \"{Environment.CurrentDirectory}\" -Recurse -Force -Confirm:$false\nNew-Item -ItemType Directory -Force -Path \"{Environment.CurrentDirectory}\"\nExpand-Archive -LiteralPath \"{Directory.GetParent(Environment.CurrentDirectory) + "\\update.zip"}\" -DestinationPath \"{Environment.CurrentDirectory}\"\nStart-Process -FilePath \"{Environment.CurrentDirectory}\\DiscordRP.exe\"";
+                    System.IO.File.WriteAllText(Directory.GetParent(Environment.CurrentDirectory).FullName + "\\install.ps1", script);
+
+                    Process process = new Process
+                    {
+                        StartInfo = new ProcessStartInfo
+                        {
+                            FileName = "powershell.exe",
+                            Arguments = $"\"&'{Directory.GetParent(Environment.CurrentDirectory).FullName + "\\install.ps1"}'\"",
+                            WorkingDirectory = Directory.GetParent(Environment.CurrentDirectory).FullName,
+                            UseShellExecute = false,
+                            CreateNoWindow = true
+                        }
+                    };
+
+                    process.Start();
+                }
+            }
+        }
+        
         private void OpenMenuItem_Click(object sender, EventArgs e)
         {
             Show();
@@ -121,8 +172,8 @@ namespace DiscordRP
             string clientId = "";
             Dispatcher.Invoke(() =>
             {
-                string path = Directory.GetParent(Assembly.GetExecutingAssembly().Location) + "\\settings.json";
-                if (System.IO.File.Exists("settings.json"))
+                string path = Directory.GetParent(Environment.CurrentDirectory).FullName + "\\settings.json";
+                if (System.IO.File.Exists(path))
                 {
                     Settings settings = JsonConvert.DeserializeObject<Settings>(System.IO.File.ReadAllText(path));
 
@@ -153,7 +204,7 @@ namespace DiscordRP
 
         public void SaveSettings()
         {
-            string path = Directory.GetParent(Assembly.GetExecutingAssembly().Location) + "\\settings.json";
+            string path = Directory.GetParent(Environment.CurrentDirectory).FullName + "\\settings.json";
 
             Settings settings = new Settings
             {
