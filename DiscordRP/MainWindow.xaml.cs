@@ -109,7 +109,7 @@ namespace DiscordRP
                     }
                     new WebClient().DownloadFile(latest.Assets[0].BrowserDownloadUrl, Directory.GetParent(Environment.CurrentDirectory) + "\\update.zip");
 
-                    string script = $"Stop-Process -Name \"{System.Windows.Forms.Application.ProductName}\"\nStart-Sleep -Seconds 2\nRemove-Item -LiteralPath \"{Environment.CurrentDirectory}\" -Recurse -Force -Confirm:$false\nNew-Item -ItemType Directory -Force -Path \"{Environment.CurrentDirectory}\"\nExpand-Archive -LiteralPath \"{Directory.GetParent(Environment.CurrentDirectory) + "\\update.zip"}\" -DestinationPath \"{Environment.CurrentDirectory}\"\nStart-Process -FilePath \"{Environment.CurrentDirectory}\\DiscordRP.exe\"";
+                    string script = $"Stop-Process -Name \"{System.Windows.Forms.Application.ProductName}\"\nStart-Sleep -Seconds 2\nRemove-Item -LiteralPath \"{Environment.CurrentDirectory}\" -Recurse -Force -Confirm:$false\nNew-Item -ItemType Directory -Force -Path \"{Environment.CurrentDirectory}\"\nExpand-Archive -LiteralPath \"{Directory.GetParent(Environment.CurrentDirectory) + "\\update.zip"}\" -DestinationPath \"{Environment.CurrentDirectory}\"\nStart-Process -FilePath \"{Environment.CurrentDirectory}\\DiscordRP.exe\" -WorkingDirectory \"{Environment.CurrentDirectory}\"";
                     System.IO.File.WriteAllText(Directory.GetParent(Environment.CurrentDirectory).FullName + "\\install.ps1", script);
 
                     Process process = new Process
