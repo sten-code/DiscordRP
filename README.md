@@ -5,3 +5,5 @@
 </p>
 
 # DiscordRP
+This application allows you to customize your rich presence on Discord, this is based on [CustomRP by maximmax42](https://github.com/maximmax42/Discord-CustomRP),
+it uses the [DiscordRPC Library by Lachee](https://github.com/Lachee/discord-rpc-csharp).
