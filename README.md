@@ -7,3 +7,7 @@
 # DiscordRP
 This application allows you to customize your rich presence on Discord, this is based on [CustomRP by maximmax42](https://github.com/maximmax42/Discord-CustomRP),
 it uses the [DiscordRPC Library by Lachee](https://github.com/Lachee/discord-rpc-csharp).
+
+## Installation
+
+To install DiscordRP you first need to download the [latest release](https://github.com/ghostkiller967/DiscordRP/releases/latest), after that you need to create a folder and in that folder you create another folder and then you put the downloaded content in there. Open the DiscordRP.exe file
