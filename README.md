@@ -22,5 +22,5 @@ To get the client id you need to go to the [Developer Portal](https://discord.co
 To add images you need to go to the Rich Presence tab in the Developer Portal, add an image, wait a couple minutes and it will show up in the dropdown box inside DiscordRP
 
 # Credit
-[DiscordRPC Library](https://github.com/Lachee/discord-rpc-csharp) by [Lachee](https://github.com/Lachee) __
+[DiscordRPC Library](https://github.com/Lachee/discord-rpc-csharp) by [Lachee](https://github.com/Lachee) <br />
 [Tiny json library](https://github.com/zanders3/json) by [zanders3](https://github.com/zanders3)
