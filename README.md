@@ -13,3 +13,7 @@ it uses the [DiscordRPC Library by Lachee](https://github.com/Lachee/discord-rpc
 ## Installation
 
 To install DiscordRP you first need to download the [latest release](https://github.com/ghostkiller967/DiscordRP/releases/latest), after that you need to create a folder and in that folder you create another folder and then you put the downloaded content in there. Open the DiscordRP.exe file
+
+To get the client id you need to go to the [Developer Portal](https://discord.com/developers/applications) and create a new application, the name of the application will be the title. Copy the Application ID and put it in the Client ID Box of DiscordRP.
+
+To add images you need to go to the Rich Presence tab in the Developer Portal, add an image, wait a couple minutes and it will show up in the dropdown box inside DiscordRP
