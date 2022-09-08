@@ -10,6 +10,8 @@
         Background="Transparent" AllowsTransparency="True"
         Title="DiscordRP" Height="975" Width="555" 
         WindowStartupLocation="CenterScreen" ResizeMode="NoResize" WindowStyle="None">
+    <local:DpiCorrection>
+       
     <Border CornerRadius="7" 
             Background="#36393f" 
             BorderThickness="1" 
@@ -233,5 +235,6 @@
                 Click="ConnectButton_Click"
                 Margin="390,111,0,0"/>
         </Grid>
-    </Border>
+        </Border>
+    </local:DpiCorrection>
 </Window>
