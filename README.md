@@ -19,6 +19,8 @@ The installer is self explanitory.
 
 To get the client id you need to go to the [Developer Portal](https://discord.com/developers/applications) and create a new application, the name of the application will be the title. Copy the Application ID and put it in the Client ID Box of DiscordRP.
 
+Make sure to enable **Activity Privacy > Display current activity as a status message.** inside the user settings within Discord.
+
 To add images you need to go to the Rich Presence tab in the Developer Portal, add an image, wait a couple minutes and it will show up in the dropdown box inside DiscordRP
 
 # Credit
