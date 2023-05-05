@@ -34,6 +34,6 @@ Make sure to enable **Activity Privacy > Display current activity as a status me
 
 To add images you need to go to the Rich Presence tab in the Developer Portal, add an image, wait a couple minutes and it will show up in the dropdown box inside DiscordRP
 
-# Credit
+# Credits
 [DiscordRPC Library](https://github.com/Lachee/discord-rpc-csharp) by [Lachee](https://github.com/Lachee) <br />
 [Tiny json library](https://github.com/zanders3/json) by [zanders3](https://github.com/zanders3)
