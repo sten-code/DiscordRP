@@ -13,7 +13,6 @@ using System.Windows.Forms;
 using System.Windows.Input;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using System.Threading;
 
 namespace DiscordRP
 {
@@ -49,7 +48,26 @@ namespace DiscordRP
                 }
             };
 
-            CreateShortcut();
+            AddShortcut();
+        }
+
+        private static void AddShortcut()
+        {
+            string pathToExe = System.Reflection.Assembly.GetExecutingAssembly().Location;
+            string commonStartMenuPath = Environment.GetFolderPath(Environment.SpecialFolder.CommonStartMenu);
+            string appStartMenuPath = Path.Combine(commonStartMenuPath, "Programs", "DiscordRP");
+
+            if (!Directory.Exists(appStartMenuPath))
+                Directory.CreateDirectory(appStartMenuPath);
+
+            string shortcutLocation = Path.Combine(appStartMenuPath, "DiscordRP.lnk");
+            WshShell shell = new WshShell();
+            IWshShortcut shortcut = (IWshShortcut)shell.CreateShortcut(shortcutLocation);
+
+            shortcut.Description = "Custom Discord Rich Presence";
+            shortcut.IconLocation = $"{Environment.CurrentDirectory}\\Resources\\Discord.ico";
+            shortcut.TargetPath = pathToExe;
+            shortcut.Save();
         }
 
         public void CheckUpdates()
@@ -95,10 +113,10 @@ namespace DiscordRP
             System.Windows.Forms.MenuItem item = (System.Windows.Forms.MenuItem)sender;
             item.Checked = !item.Checked;
             SaveSettings();
-            CreateShortcut();
+            UpdateStartup();
         }
 
-        public void CreateShortcut()
+        public void UpdateStartup()
         {
             System.Windows.Forms.MenuItem item = Notify.ContextMenu.MenuItems[1];
             string linkPath = Environment.GetFolderPath(Environment.SpecialFolder.Startup) + "\\DiscordRP.lnk";
@@ -149,6 +167,7 @@ namespace DiscordRP
                     Button2UrlBox.Text = settings.Button2Url;
                     Notify.ContextMenu.MenuItems[1].Checked = settings.RunOnStartup;
                     clientId = settings.ClientID;
+                    UpdateStartup();
                 }
                 else
                 {
@@ -249,7 +268,6 @@ namespace DiscordRP
                 Button1UrlBox.IsEnabled = false;
                 Button2TextBox.IsEnabled = false;
                 Button2UrlBox.IsEnabled = false;
-                Notify.ContextMenu.MenuItems[1].Checked = false;
                 return;
             }
 
@@ -281,14 +299,6 @@ namespace DiscordRP
             SetPresence();
 
             Client.Initialize();
-        }
-
-        public void Disconnect()
-        {
-            if (!Client.IsDisposed)
-            {
-                Client.Dispose();
-            }
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)

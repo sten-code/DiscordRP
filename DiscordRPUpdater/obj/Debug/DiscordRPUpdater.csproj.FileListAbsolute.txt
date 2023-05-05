@@ -1,8 +1,8 @@
-C:\Users\stent\Desktop\Programming\Visual Studio\Projects\C#\DiscordRP\DiscordRPUpdater\bin\Debug\DiscordRPUpdater.exe.config
-C:\Users\stent\Desktop\Programming\Visual Studio\Projects\C#\DiscordRP\DiscordRPUpdater\bin\Debug\DiscordRPUpdater.exe
-C:\Users\stent\Desktop\Programming\Visual Studio\Projects\C#\DiscordRP\DiscordRPUpdater\bin\Debug\DiscordRPUpdater.pdb
-C:\Users\stent\Desktop\Programming\Visual Studio\Projects\C#\DiscordRP\DiscordRPUpdater\obj\Debug\DiscordRPUpdater.csproj.AssemblyReference.cache
-C:\Users\stent\Desktop\Programming\Visual Studio\Projects\C#\DiscordRP\DiscordRPUpdater\obj\Debug\DiscordRPUpdater.csproj.SuggestedBindingRedirects.cache
-C:\Users\stent\Desktop\Programming\Visual Studio\Projects\C#\DiscordRP\DiscordRPUpdater\obj\Debug\DiscordRPUpdater.csproj.CoreCompileInputs.cache
-C:\Users\stent\Desktop\Programming\Visual Studio\Projects\C#\DiscordRP\DiscordRPUpdater\obj\Debug\DiscordRPUpdater.exe
-C:\Users\stent\Desktop\Programming\Visual Studio\Projects\C#\DiscordRP\DiscordRPUpdater\obj\Debug\DiscordRPUpdater.pdb
+C:\Users\stent\source\repos\DiscordRP\DiscordRPUpdater\bin\Debug\DiscordRPUpdater.exe.config
+C:\Users\stent\source\repos\DiscordRP\DiscordRPUpdater\bin\Debug\DiscordRPUpdater.exe
+C:\Users\stent\source\repos\DiscordRP\DiscordRPUpdater\bin\Debug\DiscordRPUpdater.pdb
+C:\Users\stent\source\repos\DiscordRP\DiscordRPUpdater\obj\Debug\DiscordRPUpdater.csproj.AssemblyReference.cache
+C:\Users\stent\source\repos\DiscordRP\DiscordRPUpdater\obj\Debug\DiscordRPUpdater.csproj.SuggestedBindingRedirects.cache
+C:\Users\stent\source\repos\DiscordRP\DiscordRPUpdater\obj\Debug\DiscordRPUpdater.csproj.CoreCompileInputs.cache
+C:\Users\stent\source\repos\DiscordRP\DiscordRPUpdater\obj\Debug\DiscordRPUpdater.exe
+C:\Users\stent\source\repos\DiscordRP\DiscordRPUpdater\obj\Debug\DiscordRPUpdater.pdb
