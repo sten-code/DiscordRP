@@ -47,27 +47,6 @@ namespace DiscordRP
                     }
                 }
             };
-
-            AddShortcut();
-        }
-
-        private static void AddShortcut()
-        {
-            string pathToExe = System.Reflection.Assembly.GetExecutingAssembly().Location;
-            string commonStartMenuPath = Environment.GetFolderPath(Environment.SpecialFolder.CommonStartMenu);
-            string appStartMenuPath = Path.Combine(commonStartMenuPath, "Programs", "DiscordRP");
-
-            if (!Directory.Exists(appStartMenuPath))
-                Directory.CreateDirectory(appStartMenuPath);
-
-            string shortcutLocation = Path.Combine(appStartMenuPath, "DiscordRP.lnk");
-            WshShell shell = new WshShell();
-            IWshShortcut shortcut = (IWshShortcut)shell.CreateShortcut(shortcutLocation);
-
-            shortcut.Description = "Custom Discord Rich Presence";
-            shortcut.IconLocation = $"{Environment.CurrentDirectory}\\Resources\\Discord.ico";
-            shortcut.TargetPath = pathToExe;
-            shortcut.Save();
         }
 
         public void CheckUpdates()

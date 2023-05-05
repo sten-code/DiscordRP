@@ -1,4 +1,5 @@
-﻿using System;
+﻿using IWshRuntimeLibrary;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -40,7 +41,7 @@ namespace DiscordRPInstaller
             HttpResponseMessage response = await client.GetAsync("https://api.github.com/repos/ghostkiller967/DiscordRP/releases/latest");
             string json = await response.Content.ReadAsStringAsync();
             Dictionary<string, object> release = json.FromJson<Dictionary<string, object>>();
-
+            Debug.WriteLine(json);
             // Check if the directory already exists
             if (Directory.Exists(LocationBox.Text))
                 Directory.Delete(LocationBox.Text, true);
@@ -60,7 +61,9 @@ namespace DiscordRPInstaller
 
             // Installs the latest version
             ZipFile.ExtractToDirectory(LocationBox.Text + "\\files.zip", LocationBox.Text);
-            File.Delete(LocationBox.Text + "\\files.zip");
+            System.IO.File.Delete(LocationBox.Text + "\\files.zip");
+
+            AddShortcut();
 
             // Starts the latest version
             Process.Start(new ProcessStartInfo(LocationBox.Text + "\\DiscordRP.exe")
@@ -68,6 +71,21 @@ namespace DiscordRPInstaller
                 WorkingDirectory = LocationBox.Text
             });
             Environment.Exit(0);
+        }
+
+        public void AddShortcut()
+        {
+            string appStartMenuPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonStartMenu), "Programs", "DiscordRP");
+
+            if (!Directory.Exists(appStartMenuPath))
+                Directory.CreateDirectory(appStartMenuPath);
+
+            IWshShortcut shortcut = (IWshShortcut)new WshShell().CreateShortcut(Path.Combine(appStartMenuPath, "DiscordRP.lnk"));
+            shortcut.Description = "Custom Discord Rich Presence";
+            shortcut.IconLocation = $"{LocationBox.Text}\\Resources\\Discord.ico";
+            Debug.WriteLine(LocationBox.Text + "\\DiscordRP.exe");
+            shortcut.TargetPath = LocationBox.Text + "\\DiscordRP.exe";
+            shortcut.Save();
         }
     }
 

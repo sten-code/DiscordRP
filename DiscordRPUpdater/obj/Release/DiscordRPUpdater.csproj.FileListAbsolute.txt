@@ -1,0 +1,8 @@
+C:\Users\stent\source\repos\DiscordRP\DiscordRP\Resources\DiscordRPUpdater.exe.config
+C:\Users\stent\source\repos\DiscordRP\DiscordRP\Resources\DiscordRPUpdater.exe
+C:\Users\stent\source\repos\DiscordRP\DiscordRP\Resources\DiscordRPUpdater.pdb
+C:\Users\stent\source\repos\DiscordRP\DiscordRPUpdater\obj\Release\DiscordRPUpdater.csproj.AssemblyReference.cache
+C:\Users\stent\source\repos\DiscordRP\DiscordRPUpdater\obj\Release\DiscordRPUpdater.csproj.SuggestedBindingRedirects.cache
+C:\Users\stent\source\repos\DiscordRP\DiscordRPUpdater\obj\Release\DiscordRPUpdater.csproj.CoreCompileInputs.cache
+C:\Users\stent\source\repos\DiscordRP\DiscordRPUpdater\obj\Release\DiscordRPUpdater.exe
+C:\Users\stent\source\repos\DiscordRP\DiscordRPUpdater\obj\Release\DiscordRPUpdater.pdb

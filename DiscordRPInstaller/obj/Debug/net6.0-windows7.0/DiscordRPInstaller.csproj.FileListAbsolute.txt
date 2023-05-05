@@ -18,3 +18,5 @@ C:\Users\stent\source\repos\DiscordRP\DiscordRPInstaller\obj\Debug\net6.0-window
 C:\Users\stent\source\repos\DiscordRP\DiscordRPInstaller\obj\Debug\net6.0-windows7.0\refint\DiscordRPInstaller.dll
 C:\Users\stent\source\repos\DiscordRP\DiscordRPInstaller\obj\Debug\net6.0-windows7.0\DiscordRPInstaller.genruntimeconfig.cache
 C:\Users\stent\source\repos\DiscordRP\DiscordRPInstaller\obj\Debug\net6.0-windows7.0\ref\DiscordRPInstaller.dll
+C:\Users\stent\source\repos\DiscordRP\DiscordRPInstaller\obj\Debug\net6.0-windows7.0\Interop.IWshRuntimeLibrary.dll
+C:\Users\stent\source\repos\DiscordRP\DiscordRPInstaller\obj\Debug\net6.0-windows7.0\DiscordRPInstaller.csproj.ResolveComReference.cache

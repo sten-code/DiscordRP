@@ -1,0 +1,1 @@
+C:\Users\stent\source\repos\DiscordRP\DiscordRPInstaller\bin\Release\net6.0-windows7.0\publish\win-x86\DiscordRPInstaller.exe
