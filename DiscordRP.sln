@@ -5,7 +5,9 @@ VisualStudioVersion = 17.1.32407.343
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DiscordRP", "DiscordRP\DiscordRP.csproj", "{A9883F74-3F40-4932-A2C3-24A4FBA691DE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Installer", "Installer\Installer.csproj", "{F3A01201-9295-49D1-924D-36D3CB6F60F9}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DiscordRPUpdater", "DiscordRPUpdater\DiscordRPUpdater.csproj", "{45C03E05-3109-4C5E-A4C5-0D24CBC460EA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DiscordRPInstaller", "DiscordRPInstaller\DiscordRPInstaller.csproj", "{075F19CC-1650-4754-887E-26027F4F2E25}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -17,14 +19,14 @@ Global
 		{A9883F74-3F40-4932-A2C3-24A4FBA691DE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A9883F74-3F40-4932-A2C3-24A4FBA691DE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A9883F74-3F40-4932-A2C3-24A4FBA691DE}.Release|Any CPU.Build.0 = Release|Any CPU
-		{E2A06826-02E4-4213-9295-59EE7C548E38}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{E2A06826-02E4-4213-9295-59EE7C548E38}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{E2A06826-02E4-4213-9295-59EE7C548E38}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{E2A06826-02E4-4213-9295-59EE7C548E38}.Release|Any CPU.Build.0 = Release|Any CPU
-		{F3A01201-9295-49D1-924D-36D3CB6F60F9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{F3A01201-9295-49D1-924D-36D3CB6F60F9}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{F3A01201-9295-49D1-924D-36D3CB6F60F9}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{F3A01201-9295-49D1-924D-36D3CB6F60F9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{45C03E05-3109-4C5E-A4C5-0D24CBC460EA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{45C03E05-3109-4C5E-A4C5-0D24CBC460EA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{45C03E05-3109-4C5E-A4C5-0D24CBC460EA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{45C03E05-3109-4C5E-A4C5-0D24CBC460EA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{075F19CC-1650-4754-887E-26027F4F2E25}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{075F19CC-1650-4754-887E-26027F4F2E25}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{075F19CC-1650-4754-887E-26027F4F2E25}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{075F19CC-1650-4754-887E-26027F4F2E25}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

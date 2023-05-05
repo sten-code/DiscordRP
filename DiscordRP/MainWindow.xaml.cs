@@ -1,130 +1,86 @@
 ﻿using DiscordRPC;
 using IWshRuntimeLibrary;
-using Newtonsoft.Json;
-using Octokit;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Net;
-using System.Reflection;
 using System.Timers;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Forms;
 using System.Windows.Input;
-using System.Windows.Media;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using System.Threading;
 
 namespace DiscordRP
 {
     public partial class MainWindow : Window
     {
         public DiscordRpcClient Client;
-        public GitHubClient GithubClient;
+        public WebClient WebClient;
 
         private NotifyIcon Notify;
-        private System.Timers.Timer Loop = new System.Timers.Timer(60000);
-        private System.Timers.Timer AnimationLoop = new System.Timers.Timer(10);
+        private System.Timers.Timer AssetRetrieveLoop = new System.Timers.Timer(60000);
         private MediaElement VideoPlayer;
         private Border VideoHolder;
 
         public MainWindow()
         {
             InitializeComponent();
-            GithubClient = new GitHubClient(new ProductHeaderValue("DiscordRP"));
-            CheckUpdates();
-            StartAnimation();
-            Notify = new NotifyIcon();
-            Notify.Icon = Properties.Resources.Discord;
-            Notify.Text = "DiscordRP";
-            System.Windows.Forms.ContextMenu context = new System.Windows.Forms.ContextMenu();
-            context.MenuItems.AddRange(new System.Windows.Forms.MenuItem[]
-            {
-                new System.Windows.Forms.MenuItem("Open", OpenMenuItem_Click),
-                new System.Windows.Forms.MenuItem("Run on Startup", RunOnStartupMenuItem_Click),
-                new System.Windows.Forms.MenuItem("Exit", ExitMenuItem_Click)
-            });
-            Notify.ContextMenu = context;
-            Notify.Visible = true;
-            
-            AnimationLoop.Elapsed += Animation_Elapsed;
-            Loop.Elapsed += Loop_Elapsed;
-            Loop.Start();
+            WebClient = new WebClient();
+            WebClient.Headers["User-Agent"] = "DiscordRP WebClient";
 
-            string clientId = LoadSettings();
-            if (clientId != "")
+            Notify = new NotifyIcon
             {
-                Connect(clientId);
-            }
-            else
-            {
-                ConnectButton.Content = "Connect";
-                DetailsBox.IsEnabled = false;
-                StateBox.IsEnabled = false;
-                PartySizeBox.IsEnabled = false;
-                PartyMaxBox.IsEnabled = false;
-                TimestampBox.IsEnabled = false;
-                LargeImageKeyBox.IsEnabled = false;
-                LargeImageTextBox.IsEnabled = false;
-                SmallImageKeyBox.IsEnabled = false;
-                SmallImageTextBox.IsEnabled = false;
-                Button1TextBox.IsEnabled = false;
-                Button1UrlBox.IsEnabled = false;
-                Button2TextBox.IsEnabled = false;
-                Button2UrlBox.IsEnabled = false;
-                Notify.ContextMenu.MenuItems[1].Checked = false;
-                StopAnimation();
-            }
+                Icon = Properties.Resources.Discord,
+                Text = "DiscordRP",
+                Visible = true,
+                ContextMenu = new System.Windows.Forms.ContextMenu
+                {
+                    MenuItems =
+                    {
+                        new System.Windows.Forms.MenuItem("Open", OpenMenuItem_Click),
+                        new System.Windows.Forms.MenuItem("Run on Startup", RunOnStartupMenuItem_Click),
+                        new System.Windows.Forms.MenuItem("Exit", ExitMenuItem_Click)
+                    }
+                }
+            };
 
-            Startup();
+            CreateShortcut();
         }
 
-        public async void CheckUpdates()
+        public void CheckUpdates()
         {
-            IReadOnlyList<Release> releases;
-
-            try
-            {
-                releases = await GithubClient.Repository.Release.GetAll("ghostkiller967", "DiscordRP");
-            }
-            catch
-            {
-                System.Windows.MessageBox.Show("There was an error fetching new updates, maybe check your internet connection");
-                return;
-            }
-
-            Release latest = releases[0];
+            string json = WebClient.DownloadString("https://api.github.com/repos/sten-code/DiscordRP/releases/latest");
+            Dictionary<string, object> repo = JsonConvert.DeserializeObject<Dictionary<string, object>>(json);
 
             Version currentVersion = Version.Parse(System.Windows.Forms.Application.ProductVersion);
-            Version latestVersion = Version.Parse(latest.TagName);
-
+            Version latestVersion = Version.Parse((string)repo["tag_name"]);
+            Debug.WriteLine("Current version: " + currentVersion);
+            Debug.WriteLine("Latest version: " + latestVersion);
             if (currentVersion.CompareTo(latestVersion) < 0)
             {
                 if (System.Windows.MessageBox.Show("New update detected, do you want to update?", "Update", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
                 {
-                    if (System.IO.File.Exists(Directory.GetParent(Environment.CurrentDirectory) + "\\update.zip"))
+                    List<Dictionary<string, object>> assets = ((JArray)repo["assets"]).ToObject<List<Dictionary<string, object>>>();
+                    string downloadUrl = (string)assets[0]["browser_download_url"];
+                    Debug.WriteLine(downloadUrl);
+                    if (!System.IO.File.Exists(Config.UpdaterPath))
                     {
-                        System.IO.File.Delete(Directory.GetParent(Environment.CurrentDirectory) + "\\update.zip");
+                        System.IO.File.WriteAllBytes(Config.UpdaterPath, Properties.Resources.DiscordRPUpdater);
                     }
-                    new WebClient().DownloadFile(latest.Assets[0].BrowserDownloadUrl, Directory.GetParent(Environment.CurrentDirectory) + "\\update.zip");
-
-                    string script = $"Stop-Process -Name \"{System.Windows.Forms.Application.ProductName}\"\nStart-Sleep -Seconds 2\nRemove-Item -LiteralPath \"{Environment.CurrentDirectory}\" -Recurse -Force -Confirm:$false\nNew-Item -ItemType Directory -Force -Path \"{Environment.CurrentDirectory}\"\nExpand-Archive -LiteralPath \"{Directory.GetParent(Environment.CurrentDirectory) + "\\update.zip"}\" -DestinationPath \"{Environment.CurrentDirectory}\"\nStart-Process -FilePath \"{Environment.CurrentDirectory}\\DiscordRP.exe\" -WorkingDirectory \"{Environment.CurrentDirectory}\"";
-                    System.IO.File.WriteAllText(Directory.GetParent(Environment.CurrentDirectory).FullName + "\\install.ps1", script);
-
-                    Process process = new Process
+                    Process updater = new Process
                     {
                         StartInfo = new ProcessStartInfo
                         {
-                            FileName = "powershell.exe",
-                            Arguments = $"\"&'{Directory.GetParent(Environment.CurrentDirectory).FullName + "\\install.ps1"}'\"",
-                            WorkingDirectory = Directory.GetParent(Environment.CurrentDirectory).FullName,
-                            UseShellExecute = false,
-                            CreateNoWindow = true
+                            FileName = Config.UpdaterPath,
+                            Arguments = $"\"{downloadUrl}\" \"{Environment.CurrentDirectory}\" \"{Process.GetCurrentProcess().Id}\""
                         }
                     };
-
-                    process.Start();
+                    updater.Start();
                 }
             }
         }
@@ -139,10 +95,10 @@ namespace DiscordRP
             System.Windows.Forms.MenuItem item = (System.Windows.Forms.MenuItem)sender;
             item.Checked = !item.Checked;
             SaveSettings();
-            Startup();
+            CreateShortcut();
         }
 
-        public void Startup()
+        public void CreateShortcut()
         {
             System.Windows.Forms.MenuItem item = Notify.ContextMenu.MenuItems[1];
             string linkPath = Environment.GetFolderPath(Environment.SpecialFolder.Startup) + "\\DiscordRP.lnk";
@@ -170,12 +126,12 @@ namespace DiscordRP
         public string LoadSettings()
         {
             string clientId = "";
+
             Dispatcher.Invoke(() =>
             {
-                string path = Directory.GetParent(Environment.CurrentDirectory).FullName + "\\settings.json";
-                if (System.IO.File.Exists(path))
+                if (System.IO.File.Exists(Config.SettingsPath))
                 {
-                    Settings settings = JsonConvert.DeserializeObject<Settings>(System.IO.File.ReadAllText(path));
+                    Settings settings = JsonConvert.DeserializeObject<Settings>(System.IO.File.ReadAllText(Config.SettingsPath));
 
                     ClientIDBox.Text = settings.ClientID;
                     DetailsBox.Text = settings.Details;
@@ -183,9 +139,9 @@ namespace DiscordRP
                     PartySizeBox.Text = settings.PartySize;
                     PartyMaxBox.Text = settings.PartyMax;
                     TimestampBox.SelectedIndex = settings.TimestampIndex;
-                    LargeImageKeyBox.SelectedItem = settings.LargeImageKey;
-                    LargeImageTextBox.Text = settings.LargeImageText;
-                    SmallImageKeyBox.SelectedItem = settings.SmallImageKey;
+                    LargeImageKeyBox.Tag = settings.LargeImageKey;
+                    LargeImageTextBox.Tag = settings.LargeImageText;
+                    SmallImageKeyBox.Text = settings.SmallImageKey;
                     SmallImageTextBox.Text = settings.SmallImageText;
                     Button1TextBox.Text = settings.Button1Text;
                     Button1UrlBox.Text = settings.Button1Url;
@@ -204,8 +160,6 @@ namespace DiscordRP
 
         public void SaveSettings()
         {
-            string path = Directory.GetParent(Environment.CurrentDirectory).FullName + "\\settings.json";
-
             Settings settings = new Settings
             {
                 ClientID = ClientIDBox.Text,
@@ -224,81 +178,107 @@ namespace DiscordRP
                 Button2Url = Button2UrlBox.Text,
                 RunOnStartup = Notify.ContextMenu.MenuItems[1].Checked
             };
-            string serialized = JsonConvert.SerializeObject(settings, Formatting.Indented);
-            System.IO.File.WriteAllText(path, serialized);
+            string serialized = JsonConvert.SerializeObject(settings);
+            FileInfo fileInfo = new FileInfo(Config.SettingsPath);
+            if (!fileInfo.Directory.Exists) fileInfo.Directory.Create();
+            System.IO.File.WriteAllText(Config.SettingsPath, serialized);
         }
 
-        private void Loop_Elapsed(object sender, ElapsedEventArgs e)
+        private void AssetRetrieveLoop_Elapsed(object sender, ElapsedEventArgs e)
         {
-            if (!LargeImageKeyBox.IsDropDownOpen && !SmallImageKeyBox.IsDropDownOpen)
+            Dispatcher.Invoke(() =>
             {
-                Dispatcher.Invoke(() =>
+                if (!LargeImageKeyBox.IsDropDownOpen && !SmallImageKeyBox.IsDropDownOpen)
                 {
-                    LoadAssets();
-                    SaveSettings();
-                });
-            }
+                    Dispatcher.Invoke(() =>
+                    {
+                        LoadAssets();
+                        SaveSettings();
+                    });
+                }
+            });
         }
 
         public void LoadAssets()
         {
+            string largeSelected = LargeImageKeyBox.Text;
+            string smallSelected = SmallImageKeyBox.Text;
             LargeImageKeyBox.Items.Clear();
             SmallImageKeyBox.Items.Clear();
-            using (WebClient wc = new WebClient())
+            LargeImageKeyBox.Items.Add("None");
+            SmallImageKeyBox.Items.Add("None");
+            string json = WebClient.DownloadString($"https://discordapp.com/api/oauth2/applications/{Client.ApplicationID}/assets");
+            List<ImageAssets> response = JsonConvert.DeserializeObject<List<ImageAssets>>(json);
+            foreach (ImageAssets asset in response)
             {
-                string json = wc.DownloadString($"https://discordapp.com/api/oauth2/applications/{Client.ApplicationID}/assets");
-                List<ImageAssets> response = JsonConvert.DeserializeObject<List<ImageAssets>>(json);
-                response.ForEach(asset =>
-                {
-                    LargeImageKeyBox.Items.Add(asset.Name);
-                    SmallImageKeyBox.Items.Add(asset.Name);
-                });
+                LargeImageKeyBox.Items.Add(asset.Name);
+                SmallImageKeyBox.Items.Add(asset.Name);
+            }
+            LargeImageKeyBox.Text = largeSelected;
+            SmallImageKeyBox.Text = smallSelected;
+        }
+
+        public bool IsIdValid(string id)
+        {
+            try
+            {
+                string json = WebClient.DownloadString($"https://discordapp.com/api/oauth2/applications/{id}/assets");
+                return json[0] != '{';
+            }
+            catch
+            {
+                return false;
             }
         }
 
         public void Connect(string id)
         {
-            ClientIDBox.Text = id;
-            if (Client != null)
+            if (!IsIdValid(id))
             {
-                if (!Client.IsDisposed)
-                {
-                    Client.Dispose();
-                }
+                ConnectButton.Content = "Connect";
+                DetailsBox.IsEnabled = false;
+                StateBox.IsEnabled = false;
+                PartySizeBox.IsEnabled = false;
+                PartyMaxBox.IsEnabled = false;
+                TimestampBox.IsEnabled = false;
+                LargeImageKeyBox.IsEnabled = false;
+                LargeImageTextBox.IsEnabled = false;
+                SmallImageKeyBox.IsEnabled = false;
+                SmallImageTextBox.IsEnabled = false;
+                Button1TextBox.IsEnabled = false;
+                Button1UrlBox.IsEnabled = false;
+                Button2TextBox.IsEnabled = false;
+                Button2UrlBox.IsEnabled = false;
+                Notify.ContextMenu.MenuItems[1].Checked = false;
+                return;
+            }
+
+            ClientIDBox.Text = id;
+            if (Client != null && !Client.IsDisposed)
+            {
+                Client.Dispose();
             }
 
             Client = new DiscordRpcClient(id);
-            Client.OnReady += (sender, e) =>
-            {
-                Dispatcher.Invoke(() =>
-                {
-                    DetailsBox.IsEnabled = true;
-                    StateBox.IsEnabled = true;
-                    PartySizeBox.IsEnabled = true;
-                    PartyMaxBox.IsEnabled = true;
-                    TimestampBox.IsEnabled = true;
-                    LargeImageKeyBox.IsEnabled = true;
-                    LargeImageTextBox.IsEnabled = true;
-                    SmallImageKeyBox.IsEnabled = true;
-                    SmallImageTextBox.IsEnabled = true;
-                    Button1TextBox.IsEnabled = true;
-                    Button1UrlBox.IsEnabled = true;
-                    Button2TextBox.IsEnabled = true;
-                    Button2UrlBox.IsEnabled = true;
-                    ConnectButton.Content = "Reconnect";
-                    LoadAssets();
-                    SetPresence();
-                    StopAnimation();
-                });
-            };
+            LoadAssets();
+            LargeImageKeyBox.Text = (string)LargeImageKeyBox.Tag;
+            SmallImageKeyBox.Text = (string)SmallImageKeyBox.Tag;
 
-            Client.OnClose += (sender, e) =>
-            {
-                Dispatcher.Invoke(() =>
-                {
-                    StartAnimation();
-                });
-            };
+            DetailsBox.IsEnabled = true;
+            StateBox.IsEnabled = true;
+            PartySizeBox.IsEnabled = true;
+            PartyMaxBox.IsEnabled = true;
+            TimestampBox.IsEnabled = true;
+            LargeImageKeyBox.IsEnabled = true;
+            LargeImageTextBox.IsEnabled = true;
+            SmallImageKeyBox.IsEnabled = true;
+            SmallImageTextBox.IsEnabled = true;
+            Button1TextBox.IsEnabled = true;
+            Button1UrlBox.IsEnabled = true;
+            Button2TextBox.IsEnabled = true;
+            Button2UrlBox.IsEnabled = true;
+            ConnectButton.Content = "Reconnect";
+            SetPresence();
 
             Client.Initialize();
         }
@@ -310,68 +290,6 @@ namespace DiscordRP
                 Client.Dispose();
             }
         }
-
-        #region Animation
-
-        private void Animation_Elapsed(object sender, ElapsedEventArgs e)
-        {
-            TimeSpan position = TimeSpan.Zero;
-            TimeSpan duration = TimeSpan.MaxValue;
-            Dispatcher.Invoke(() =>
-            {
-                if (VideoPlayer.NaturalDuration.HasTimeSpan)
-                {
-                    position = VideoPlayer.Position;
-                    duration = VideoPlayer.NaturalDuration.TimeSpan;
-                }
-                else
-                {
-                    return;
-                }
-            });
-            if (position >= duration)
-            {
-                Dispatcher.Invoke(() =>
-                {
-                    VideoPlayer.Source = new Uri("Resources/Loading.mp4", UriKind.Relative);
-                    VideoPlayer.Play();
-                });
-            }
-        }
-
-        public void StartAnimation()
-        {
-            if (!AnimationLoop.Enabled)
-            {
-                VideoHolder = new Border()
-                {
-                    CornerRadius = new CornerRadius(10),
-                    Background = new SolidColorBrush(Color.FromRgb(47, 49, 53))
-                };
-                MainGrid.Children.Add(VideoHolder);
-
-                VideoPlayer = new MediaElement()
-                {
-                    LoadedBehavior = MediaState.Manual,
-                    UnloadedBehavior = MediaState.Manual,
-                    Source = new Uri("Resources/Loading.mp4", UriKind.Relative),
-                    Stretch = Stretch.None
-                };
-                VideoHolder.Child = VideoPlayer;
-                VideoHolder.Visibility = Visibility.Visible;
-                AnimationLoop.Start();
-                VideoPlayer.Play();
-            }
-        }
-
-        public void StopAnimation()
-        {
-            VideoPlayer.Close();
-            VideoHolder.Visibility = Visibility.Hidden;
-            AnimationLoop.Stop();
-        }
-
-        #endregion
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
@@ -387,19 +305,19 @@ namespace DiscordRP
                 State = StateBox.Text,
                 Assets = new Assets
                 {
-                    LargeImageKey = (string)LargeImageKeyBox.SelectedItem,
+                    LargeImageKey = LargeImageKeyBox.Text == "None" ? "" : LargeImageKeyBox.Text,
                     LargeImageText = LargeImageTextBox.Text,
-                    SmallImageKey = (string)SmallImageKeyBox.SelectedItem,
+                    SmallImageKey = SmallImageKeyBox.Text == "None" ? "" : SmallImageKeyBox.Text,
                     SmallImageText = SmallImageTextBox.Text
-                }
+                },
             };
 
+            // Add a party size only if both boxes are filled in
             if (PartySizeBox.Text != "" && PartyMaxBox.Text != "")
             {
-                Debug.WriteLine("step 1");
+                // values must be an int, if not, don't add it
                 if (int.TryParse(PartySizeBox.Text, out int partySize) && int.TryParse(PartyMaxBox.Text, out int partyMax))
                 {
-                    Debug.WriteLine("step 2");
                     presence.Party = new Party
                     {
                         ID = "DiscordRP",
@@ -409,33 +327,54 @@ namespace DiscordRP
                 }
             }
 
+            // Add buttons to the rich presence, only if both boxes are filled in.
             List<DiscordRPC.Button> buttons = new List<DiscordRPC.Button>();
             if (Button1TextBox.Text != "" && Button1UrlBox.Text != "")
             {
-                buttons.Add(new DiscordRPC.Button()
+                try
                 {
-                    Label = Button1TextBox.Text,
-                    Url = Button1UrlBox.Text
-                });
+                    buttons.Add(new DiscordRPC.Button()
+                    {
+                        Label = Button1TextBox.Text,
+                        Url = Button1UrlBox.Text
+                    });
+                } 
+                catch (Exception ex)
+                {
+                    // The filled in boxes weren't valid, most likely because of an invalid uri
+                    Debug.WriteLine(ex.Message);
+                }
             }
 
             if (Button2TextBox.Text != "" && Button2UrlBox.Text != "")
             {
-                buttons.Add(new DiscordRPC.Button()
+                try
                 {
-                    Label = Button2TextBox.Text,
-                    Url = Button2UrlBox.Text
-                });
+                    buttons.Add(new DiscordRPC.Button()
+                    {
+                        Label = Button2TextBox.Text,
+                        Url = Button2UrlBox.Text
+                    });
+                }
+                catch (Exception ex)
+                {
+                    // The filled in boxes weren't valid, most likely because of an invalid uri
+                    Debug.WriteLine(ex.Message);
+                }
             }
             presence.Buttons = buttons.ToArray();
 
-            if (TimestampBox.SelectedIndex == 1)
+            // If index 0 (None in the combobox) is chosen, don't add a timestamp
+            switch (TimestampBox.SelectedIndex)
             {
-                presence.Timestamps = new Timestamps(DateTime.UtcNow.Subtract(new TimeSpan(DateTime.Now.Hour, DateTime.Now.Minute, DateTime.Now.Second)), null);
-            }
-            else if (TimestampBox.SelectedIndex == 2)
-            {
-                presence.Timestamps = new Timestamps(DateTime.UtcNow.Subtract(UpTime), null);
+                case 1:
+                    presence.Timestamps = new Timestamps(DateTime.UtcNow.Subtract(new TimeSpan(DateTime.Now.Hour, DateTime.Now.Minute, DateTime.Now.Second)));
+                    break;
+                case 2:
+                    presence.Timestamps = new Timestamps(DateTime.UtcNow.Subtract(UpTime));
+                    break;
+                default:
+                    break;
             }
 
             Client.SetPresence(presence);
@@ -475,35 +414,49 @@ namespace DiscordRP
             if (e.ChangedButton == MouseButton.Left)
                 DragMove();
         }
+
+        private void Window_Loaded(object sender, RoutedEventArgs e)
+        {
+            CheckUpdates();
+
+            string clientId = LoadSettings();
+            Connect(clientId);
+
+            AssetRetrieveLoop.Elapsed += AssetRetrieveLoop_Elapsed;
+            AssetRetrieveLoop.Start();
+        }
+
     }
 
-    [Serializable]
     public class Settings
     {
-        public string ClientID;
-        public string Details;
-        public string State;
-        public string PartySize;
-        public string PartyMax;
-        public int TimestampIndex;
+        public string ClientID { get; set; }
+        public string Details { get; set; }
+        public string State { get; set; }
+        public string PartySize { get; set; }
+        public string PartyMax { get; set; }
+        public int TimestampIndex { get; set; }
 
-        public string LargeImageKey;
-        public string LargeImageText;
-        public string SmallImageKey;
-        public string SmallImageText;
+        public string LargeImageKey { get; set; }
+        public string LargeImageText { get; set; }
+        public string SmallImageKey { get; set; }
+        public string SmallImageText { get; set; }
 
-        public string Button1Text;
-        public string Button1Url;
-        public string Button2Text;
-        public string Button2Url;
+        public string Button1Text { get; set; }
+        public string Button1Url { get; set; } 
+        public string Button2Text { get; set; }
+        public string Button2Url { get; set; }
 
-        public bool RunOnStartup;
+        public bool RunOnStartup { get; set; }
     }
 
-    public struct ImageAssets
+    public class ImageAssets
     {
-        public string ID;
-        public string Type;
-        public string Name;
+        [JsonProperty("id")]
+        public string Id { get; set; }
+        [JsonProperty("type")]
+        public int Type { get; set; }
+        [JsonProperty("name")]
+        public string Name { get; set; }
     }
 }

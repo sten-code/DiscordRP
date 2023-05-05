@@ -1,0 +1,28 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net6.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
+    <UseWPF>true</UseWPF>
+    <UseWindowsForms>True</UseWindowsForms>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="Fonts\whitney-bold.otf" />
+    <None Remove="Fonts\whitney-book.otf" />
+    <None Remove="Fonts\whitney-light.otf" />
+    <None Remove="Fonts\whitney-medium.otf" />
+    <None Remove="Fonts\whitney-semibold.otf" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Fonts\whitney-bold.otf" />
+    <Resource Include="Fonts\whitney-book.otf" />
+    <Resource Include="Fonts\whitney-light.otf" />
+    <Resource Include="Fonts\whitney-medium.otf" />
+    <Resource Include="Fonts\whitney-semibold.otf" />
+  </ItemGroup>
+
+</Project>

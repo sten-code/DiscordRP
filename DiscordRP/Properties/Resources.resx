@@ -121,7 +121,7 @@
   <data name="Discord" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Discord.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="Loading" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\Loading.mp4;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  <data name="DiscordRPUpdater" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\DiscordRPUpdater.exe;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
 </root>
